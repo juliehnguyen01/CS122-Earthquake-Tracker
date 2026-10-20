@@ -28,7 +28,12 @@ For this project assignment, we have decided to create a Global Earthquake Track
 
 3) Data Analysis and Visualization Plan (Author #2 - Vishal Kumar)
 
-To be completed by Author #2
+- Use Python's pandas library to read and analyze the earthquake CSV data.
+- Filter earthquake records by location, date range, and magnitude.
+- Calculate statistics such as the total number of earthquakes, average magnitude, maximum magnitude, and average depth.
+- Use NumPy to help perform numerical calculations on the earthquake data.
+- Create graphs and visualizations using Matplotlib to show earthquake activity and magnitude patterns.
+- Display the calculated statistics and visualizations in the application's analysis page.
 
 **Future Improvements**
 - Implement an interactive map to help users visualize earthquake locations.
