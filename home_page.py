@@ -2,6 +2,7 @@
 from tkinter import messagebox
 from datetime import datetime
 from data_collection import get_earthquakes
+from analysis_page import open_analysis_page
 import tkinter as tk
 import requests
 
@@ -126,8 +127,9 @@ search_button.pack(pady=20)
 analysis_button = tk.Button(
     window,
     text="View Earthquake Analysis",
-    width=25
+    width=25,
+    command=lambda: open_analysis_page(window)
 )
 analysis_button.pack(pady=5)
 
-window.mainloop()
+
