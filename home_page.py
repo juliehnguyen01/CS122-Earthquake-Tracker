@@ -114,15 +114,34 @@ def search_earthquakes():
         )
 
 
+def reset_filters():
+    magnitude_entry.delete(0, tk.END)
+    magnitude_entry.insert(0, "4.0")
+
+    start_entry.delete(0, tk.END)
+    start_entry.insert(0, "2026-11-01")
+
+    end_entry.delete(0, tk.END)
+    end_entry.insert(0, "2026-11-07")
+
+    region_variable.set("Worldwide")
+
+
 search_button = tk.Button(
     window,
     text="Search Earthquakes",
     width=20,
     command=search_earthquakes
 )
-
-
 search_button.pack(pady=20)
+
+reset_button = tk.Button(
+    window,
+    text="Reset Filters",
+    width=20,
+    command=reset_filters
+)
+reset_button.pack(pady=5)
 
 analysis_button = tk.Button(
     window,
@@ -131,5 +150,3 @@ analysis_button = tk.Button(
     command=lambda: open_analysis_page(window)
 )
 analysis_button.pack(pady=5)
-
-
