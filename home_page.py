@@ -8,58 +8,109 @@ import requests
 
 window = tk.Tk()
 window.title("Global Earthquake Tracker & Analyzer")
-window.geometry("800x650")
+window.geometry("800x620")
+window.configure(bg="#f2f4f7")
 
 title = tk.Label(
     window,
     text="Global Earthquake Tracker & Analyzer",
-    font=("Arial", 22, "bold")
+    font=("Arial", 22, "bold"),
+    bg="#f2f4f7",
+    fg="#243447"
 )
-title.pack(pady=30)
+title.pack(pady=(25, 10))
 
 description = tk.Label(
     window,
     text="Explore earthquake activity around the world!",
-    font=("Arial", 14)
+    font=("Arial", 13),
+    bg="#f2f4f7",
+    fg="#555555"
 )
-description.pack(pady=10)
+description.pack(pady=(0, 15))
+
+filter_frame = tk.Frame(
+    window,
+    bg="white",
+    padx=35,
+    pady=15,
+    highlightbackground="#dddddd",
+    highlightthickness=1
+)
+filter_frame.pack(pady=10)
 
 heading = tk.Label(
-    window,
+    filter_frame,
     text="Earthquake Search Filters",
-    font=("Arial", 16, "bold")
+    font=("Arial", 16, "bold"),
+    bg="white",
+    fg="#243447"
 )
-heading.pack(pady=20)
+heading.pack(pady=(0, 15))
 
-magnitude_label = tk.Label(window, text="Minimum Magnitude:")
+magnitude_label = tk.Label(
+    filter_frame,
+    text="Minimum Magnitude:",
+    bg="white",
+    font=("Arial", 11)
+)
 magnitude_label.pack()
 
-magnitude_entry = tk.Entry(window)
+magnitude_entry = tk.Entry(filter_frame, width=25)
 magnitude_entry.insert(0, "4.0")
-magnitude_entry.pack(pady=5)
+magnitude_entry.pack(pady=(5, 12))
 
-start_label = tk.Label(window, text="Start Date (YYYY-MM-DD):")
+start_label = tk.Label(
+    filter_frame,
+    text="Start Date (YYYY-MM-DD):",
+    bg="white",
+    font=("Arial", 11)
+)
 start_label.pack()
 
-start_entry = tk.Entry(window)
+start_entry = tk.Entry(filter_frame, width=25)
 start_entry.insert(0, "2026-11-01")
-start_entry.pack(pady=5)
+start_entry.pack(pady=(5, 12))
 
-end_label = tk.Label(window, text="End Date (YYYY-MM-DD):")
+end_label = tk.Label(
+    filter_frame,
+    text="End Date (YYYY-MM-DD):",
+    bg="white",
+    font=("Arial", 11)
+)
 end_label.pack()
 
-end_entry = tk.Entry(window)
+end_entry = tk.Entry(filter_frame, width=25)
 end_entry.insert(0, "2026-11-07")
-end_entry.pack(pady=5)
+end_entry.pack(pady=(5, 12))
 
-region_label = tk.Label(window, text="Select Region:")
+region_label = tk.Label(
+    filter_frame,
+    text="Select Region:",
+    bg="white",
+    font=("Arial", 11)
+)
 region_label.pack()
 
 regions = ["Worldwide", "California", "Japan", "Indonesia", "Alaska"]
 region_variable = tk.StringVar(value="Worldwide")
 
-region_menu = tk.OptionMenu(window, region_variable, *regions)
-region_menu.pack(pady=5)
+region_menu = tk.OptionMenu(filter_frame, region_variable, *regions)
+region_menu.config(width=20, highlightthickness=0)
+region_menu.pack(pady=(5, 10))
+
+
+def reset_filters():
+    magnitude_entry.delete(0, tk.END)
+    magnitude_entry.insert(0, "4.0")
+
+    start_entry.delete(0, tk.END)
+    start_entry.insert(0, "2026-11-01")
+
+    end_entry.delete(0, tk.END)
+    end_entry.insert(0, "2026-11-07")
+
+    region_variable.set("Worldwide")
 
 
 def search_earthquakes():
@@ -114,31 +165,20 @@ def search_earthquakes():
         )
 
 
-def reset_filters():
-    magnitude_entry.delete(0, tk.END)
-    magnitude_entry.insert(0, "4.0")
-
-    start_entry.delete(0, tk.END)
-    start_entry.insert(0, "2026-11-01")
-
-    end_entry.delete(0, tk.END)
-    end_entry.insert(0, "2026-11-07")
-
-    region_variable.set("Worldwide")
-
-
 search_button = tk.Button(
     window,
     text="Search Earthquakes",
-    width=20,
+    width=25,
+    font=("Arial", 11, "bold"),
     command=search_earthquakes
 )
-search_button.pack(pady=20)
+search_button.pack(pady=(15, 5))
 
 reset_button = tk.Button(
     window,
     text="Reset Filters",
-    width=20,
+    width=25,
+    font=("Arial", 11),
     command=reset_filters
 )
 reset_button.pack(pady=5)
@@ -147,6 +187,7 @@ analysis_button = tk.Button(
     window,
     text="View Earthquake Analysis",
     width=25,
+    font=("Arial", 11, "bold"),
     command=lambda: open_analysis_page(window)
 )
 analysis_button.pack(pady=5)
