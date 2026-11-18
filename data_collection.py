@@ -1,75 +1,72 @@
 
-# CS 122 Final Project
-# Global Earthquake Tracker & Analyzer
-# Author #1: Julie Nguyen
-# Data Collection and Storage
-
 import requests
 import csv
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
-# USGS Earthquake API
-url = "https://earthquake.usgs.gov/fdsnws/event/1/query"
 
-# Search for earthquakes
-parameters = {
-    "format": "geojson",
-    "starttime": "2026-11-01",
-    "endtime": "2026-11-07",
-    "minmagnitude": 4.0,
-    "limit": 100
-}
+def get_earthquakes(start_date, end_date, magnitude, region):
+    url = "https://earthquake.usgs.gov/fdsnws/event/1/query"
 
-# Request earthquake data
-response = requests.get(url, params=parameters, timeout=30)
-response.raise_for_status()
+    parameters = {
+        "format": "geojson",
+        "starttime": start_date,
+        "endtime": end_date,
+        "minmagnitude": magnitude,
+        "limit": 100
+    }
 
-# Convert response to a Python dictionary
-data = response.json()
+    regions = {
+        "California": (32, 42, -125, -114),
+        "Japan": (24, 46, 123, 146),
+        "Indonesia": (-11, 6, 95, 141),
+        "Alaska": (51, 72, -170, -130)
+    }
 
-# Get earthquake records
-earthquakes = data["features"]
+    if region in regions:
+        bounds = regions[region]
+        parameters["minlatitude"] = bounds[0]
+        parameters["maxlatitude"] = bounds[1]
+        parameters["minlongitude"] = bounds[2]
+        parameters["maxlongitude"] = bounds[3]
 
-# Save CSV inside the project's data folder
-data_folder = Path(__file__).parent / "data"
-data_folder.mkdir(exist_ok=True)
-file_name = data_folder / "earthquakes.csv"
+    response = requests.get(url, params=parameters, timeout=30)
+    response.raise_for_status()
 
-# Open CSV file
-with open(file_name, "w", newline="", encoding="utf-8") as file:
-    writer = csv.writer(file)
+    data = response.json()
+    earthquakes = data["features"]
 
-    # Column names
-    writer.writerow([
-        "Date", "Location", "Magnitude",
-        "Depth", "Latitude", "Longitude"
-    ])
+    data_folder = Path(__file__).parent / "data"
+    data_folder.mkdir(exist_ok=True)
+    file_name = data_folder / "earthquakes.csv"
 
-    # Save each earthquake
-    for earthquake in earthquakes:
-        properties = earthquake["properties"]
-        coordinates = earthquake["geometry"]["coordinates"]
-
-        # Convert earthquake time to readable date
-        timestamp = properties["time"] / 1000
-        date = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S")
-
-        location = properties["place"]
-        magnitude = properties["mag"]
-
-        longitude = coordinates[0]
-        latitude = coordinates[1]
-        depth = coordinates[2]
+    with open(file_name, "w", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
 
         writer.writerow([
-            date, location, magnitude,
-            depth, latitude, longitude
+            "Date", "Location", "Magnitude",
+            "Depth", "Latitude", "Longitude"
         ])
 
-# Display results
-print("Global Earthquake Tracker")
-print("-------------------------")
-print("Total earthquakes retrieved:", len(earthquakes))
-print("Earthquake data saved to:", file_name)
+        for earthquake in earthquakes:
+            properties = earthquake["properties"]
+            coordinates = earthquake["geometry"]["coordinates"]
 
+            timestamp = properties["time"] / 1000
+            date = datetime.fromtimestamp(
+                timestamp, tz=timezone.utc
+            ).strftime("%Y-%m-%d %H:%M:%S")
+
+            location = properties["place"]
+            magnitude = properties["mag"]
+
+            longitude = coordinates[0]
+            latitude = coordinates[1]
+            depth = coordinates[2]
+
+            writer.writerow([
+                date, location, magnitude,
+                depth, latitude, longitude
+            ])
+
+    return len(earthquakes)
